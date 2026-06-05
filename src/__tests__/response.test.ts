@@ -43,9 +43,9 @@ describe('fail', () => {
 });
 
 describe('ERRORS', () => {
-  it('has generic error codes', () => {
-    expect(Object.keys(ERRORS)).toHaveLength(8);
-    expect(ERRORS).not.toHaveProperty('GATEWAY_OFFLINE');
+  it('has agent runtime error codes', () => {
+    expect(Object.keys(ERRORS)).toHaveLength(9);
+    expect(ERRORS).toHaveProperty('GATEWAY_OFFLINE');
   });
 
   it('each error has error and code fields', () => {
@@ -56,7 +56,7 @@ describe('ERRORS', () => {
   });
 
   it('AUTH_REQUIRED has correct message', () => {
-    expect(ERRORS.AUTH_REQUIRED.error).toBe('Authentication required');
+    expect(ERRORS.AUTH_REQUIRED.error).toBe('未登录');
   });
 });
 

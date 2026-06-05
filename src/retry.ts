@@ -2,7 +2,7 @@
  * Sleep, retry, and timeout helpers.
  *
  * Example:
- *   import { sleep, retry, withTimeout } from '@linger/utils';
+ *   import { sleep, retry, withTimeout } from './src/retry';
  */
 
 export function sleep(ms: number): Promise<void> {

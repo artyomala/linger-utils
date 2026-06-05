@@ -1,10 +1,9 @@
 /**
- * Fetch helpers that return structured API responses.
+ * Agent standard HTTP helpers that return structured API responses.
  *
  * Example:
- *   import { createApiClient } from '@linger/utils';
- *   const api = createApiClient({ baseUrl: 'https://api.example.com' });
- *   const res = await api('/status');
+ *   import { apiFetch, createApiClient } from './src/fetch';
+ *   const res = await apiFetch('/api/gateway/status');
  *   if (res.success) { handleData(res.data); }
  */
 
@@ -30,9 +29,10 @@ export interface ApiClientOptions {
 }
 
 const DEFAULT_TIMEOUT = 10000;
+const DEFAULT_BASE_URL = process.env.AGENT_STDLIB_GATEWAY_URL || 'http://127.0.0.1:18789';
 
 function buildUrl(baseUrl: string | undefined, path: string, query?: Record<string, string | number>): string {
-  const url = baseUrl ? new URL(path, baseUrl) : new URL(path);
+  const url = baseUrl ? new URL(path, baseUrl) : new URL(path, DEFAULT_BASE_URL);
   for (const [k, v] of Object.entries(query ?? {})) url.searchParams.set(k, String(v));
   return url.toString();
 }
@@ -109,9 +109,9 @@ export async function apiFetch<T = unknown>(
     return { success: true, data: (await res.text()) as unknown as T };
   } catch (err: unknown) {
     if (err instanceof DOMException && err.name === 'AbortError') {
-      return fail('Request timed out', 'TIMEOUT');
+      return fail('请求超时', 'TIMEOUT');
     }
-    return fail(err instanceof Error ? err.message : 'Network error', 'NETWORK_ERROR');
+    return fail(err instanceof Error ? err.message : '网络错误', 'NETWORK_ERROR');
   } finally {
     clearTimeout(timer);
   }

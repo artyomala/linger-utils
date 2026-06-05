@@ -1,0 +1,7 @@
+{
+  "agent_name": "绫儿",
+  "log_prefix": "[绫儿]",
+  "workspace": "~/.openclaw/workspace",
+  "identity": "~/openclaw-identity",
+  "catalog": "catalog/standard-functions.json"
+}

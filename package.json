@@ -1,18 +1,18 @@
 {
-  "name": "@linger/utils",
+  "name": "linger-agent-stdlib-system",
   "version": "1.0.0",
-  "description": "Shared TypeScript utilities for fetch, logging, file operations, IDs, retries, and API responses",
+  "private": true,
+  "description": "Agent standard function library system: TypeScript utilities plus toolkit check/find/register workflow",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/artyomala/linger-utils.git"
   },
   "keywords": [
-    "typescript",
-    "utilities",
-    "fetch",
-    "logger",
-    "response",
-    "retry"
+    "agent",
+    "standard-library",
+    "toolkit",
+    "openclaw",
+    "typescript"
   ],
   "author": "Linger contributors",
   "license": "MIT",
@@ -34,11 +34,12 @@
   "scripts": {
     "build": "tsc",
     "typecheck": "tsc --noEmit",
-    "prepublishOnly": "npm run build",
     "test": "vitest run",
     "test:watch": "vitest",
     "lint": "npx tsc --noEmit",
-    "ci": "npm run lint && npm run test && npm run build"
+    "sync": "python3 scripts/toolkit.py sync",
+    "toolkit": "python3 scripts/toolkit.py",
+    "ci": "npm run lint && npm run test && npm run build && python3 scripts/toolkit.py sync"
   },
   "peerDependencies": {
     "express": "^5.0.0"
@@ -49,7 +50,11 @@
     }
   },
   "files": [
-    "dist/"
+    "src/",
+    "scripts/",
+    "catalog/",
+    "SKILL.md",
+    "README.md"
   ],
   "devDependencies": {
     "@types/express": "^5.0.0",

@@ -1,0 +1,541 @@
+{
+  "version": 1,
+  "agent_name": "绫儿",
+  "log_prefix": "[绫儿]",
+  "generated_by": "scripts/toolkit.py sync",
+  "functions": [
+    {
+      "name": "ApiClientOptions",
+      "kind": "export",
+      "file": "src/fetch.ts",
+      "line": 25,
+      "signature": "export interface ApiClientOptions {",
+      "description": "",
+      "keywords": [
+        "apiclientoptions",
+        "fetch"
+      ],
+      "source": "src"
+    },
+    {
+      "name": "ApiErrorResponse",
+      "kind": "export",
+      "file": "src/response.ts",
+      "line": 16,
+      "signature": "export type ApiErrorResponse = { success: false; error: string; code?: string; status?: number };",
+      "description": "",
+      "keywords": [
+        "apierrorresponse",
+        "response"
+      ],
+      "source": "src"
+    },
+    {
+      "name": "apiFetch",
+      "kind": "export",
+      "file": "src/fetch.ts",
+      "line": 64,
+      "signature": "export async function apiFetch<T = unknown>(",
+      "description": "",
+      "keywords": [
+        "apifetch",
+        "fetch"
+      ],
+      "source": "src"
+    },
+    {
+      "name": "ApiOkResponse",
+      "kind": "export",
+      "file": "src/response.ts",
+      "line": 15,
+      "signature": "export type ApiOkResponse<T> = { success: true; data: T };",
+      "description": "Agent standard response helpers.",
+      "keywords": [
+        "agent",
+        "apiokresponse",
+        "helpers",
+        "response",
+        "standard"
+      ],
+      "source": "src"
+    },
+    {
+      "name": "ApiResponse",
+      "kind": "export",
+      "file": "src/response.ts",
+      "line": 17,
+      "signature": "export type ApiResponse<T = unknown> = ApiOkResponse<T> | ApiErrorResponse;",
+      "description": "",
+      "keywords": [
+        "apiresponse",
+        "response"
+      ],
+      "source": "src"
+    },
+    {
+      "name": "backupFile",
+      "kind": "export",
+      "file": "src/fs.ts",
+      "line": 41,
+      "signature": "export async function backupFile(filePath: string): Promise<string | null> {",
+      "description": "Copies a file into a sibling .backup directory and returns the backup path.",
+      "keywords": [
+        "and",
+        "backup",
+        "backupfile",
+        "copies",
+        "directory",
+        "file",
+        "fs",
+        "into",
+        "path",
+        "returns",
+        "sibling",
+        "the"
+      ],
+      "source": "src"
+    },
+    {
+      "name": "createApiClient",
+      "kind": "export",
+      "file": "src/fetch.ts",
+      "line": 120,
+      "signature": "export function createApiClient(defaults: ApiClientOptions) {",
+      "description": "",
+      "keywords": [
+        "createapiclient",
+        "fetch"
+      ],
+      "source": "src"
+    },
+    {
+      "name": "createCorrelationId",
+      "kind": "export",
+      "file": "src/id.ts",
+      "line": 17,
+      "signature": "export function createCorrelationId(channel: string, roomId: string): string {",
+      "description": "Creates a stable correlation ID from a channel and room ID.",
+      "keywords": [
+        "and",
+        "channel",
+        "correlation",
+        "createcorrelationid",
+        "creates",
+        "from",
+        "id",
+        "room",
+        "stable"
+      ],
+      "source": "src"
+    },
+    {
+      "name": "createLogger",
+      "kind": "export",
+      "file": "src/logger.ts",
+      "line": 36,
+      "signature": "export function createLogger(options: LoggerOptions = {}): Logger {",
+      "description": "",
+      "keywords": [
+        "createlogger",
+        "logger"
+      ],
+      "source": "src"
+    },
+    {
+      "name": "ErrorCode",
+      "kind": "export",
+      "file": "src/response.ts",
+      "line": 47,
+      "signature": "export type ErrorCode = keyof typeof ERRORS;",
+      "description": "",
+      "keywords": [
+        "errorcode",
+        "response"
+      ],
+      "source": "src"
+    },
+    {
+      "name": "ERRORS",
+      "kind": "export",
+      "file": "src/response.ts",
+      "line": 35,
+      "signature": "export const ERRORS = {",
+      "description": "",
+      "keywords": [
+        "errors",
+        "response"
+      ],
+      "source": "src"
+    },
+    {
+      "name": "fail",
+      "kind": "export",
+      "file": "src/response.ts",
+      "line": 23,
+      "signature": "export function fail(error: string, code?: string): ApiErrorResponse {",
+      "description": "",
+      "keywords": [
+        "fail",
+        "response"
+      ],
+      "source": "src"
+    },
+    {
+      "name": "FetchOptions",
+      "kind": "export",
+      "file": "src/fetch.ts",
+      "line": 16,
+      "signature": "export interface FetchOptions {",
+      "description": "",
+      "keywords": [
+        "fetch",
+        "fetchoptions"
+      ],
+      "source": "src"
+    },
+    {
+      "name": "formatZhTime",
+      "kind": "export",
+      "file": "src/id.ts",
+      "line": 30,
+      "signature": "export function formatZhTime(iso?: string): string {",
+      "description": "Formats a timestamp with compact zh-CN date and time fields.",
+      "keywords": [
+        "and",
+        "cn",
+        "compact",
+        "date",
+        "fields",
+        "formats",
+        "formatzhtime",
+        "id",
+        "time",
+        "timestamp",
+        "with",
+        "zh"
+      ],
+      "source": "src"
+    },
+    {
+      "name": "isError",
+      "kind": "export",
+      "file": "src/response.ts",
+      "line": 31,
+      "signature": "export function isError<T>(res: ApiResponse<T>): res is ApiErrorResponse {",
+      "description": "",
+      "keywords": [
+        "iserror",
+        "response"
+      ],
+      "source": "src"
+    },
+    {
+      "name": "isoTimestamp",
+      "kind": "export",
+      "file": "src/id.ts",
+      "line": 25,
+      "signature": "export function isoTimestamp(): string {",
+      "description": "Returns the current ISO timestamp.",
+      "keywords": [
+        "current",
+        "id",
+        "iso",
+        "isotimestamp",
+        "returns",
+        "the",
+        "timestamp"
+      ],
+      "source": "src"
+    },
+    {
+      "name": "isSuccess",
+      "kind": "export",
+      "file": "src/response.ts",
+      "line": 27,
+      "signature": "export function isSuccess<T>(res: ApiResponse<T>): res is ApiOkResponse<T> {",
+      "description": "",
+      "keywords": [
+        "issuccess",
+        "response"
+      ],
+      "source": "src"
+    },
+    {
+      "name": "listBackups",
+      "kind": "export",
+      "file": "src/fs.ts",
+      "line": 72,
+      "signature": "export async function listBackups(filePath: string): Promise<string[]> {",
+      "description": "Lists backups in the sibling .backup directory.",
+      "keywords": [
+        "backup",
+        "backups",
+        "directory",
+        "fs",
+        "in",
+        "listbackups",
+        "lists",
+        "sibling",
+        "the"
+      ],
+      "source": "src"
+    },
+    {
+      "name": "Logger",
+      "kind": "export",
+      "file": "src/logger.ts",
+      "line": 14,
+      "signature": "export interface Logger {",
+      "description": "",
+      "keywords": [
+        "logger"
+      ],
+      "source": "src"
+    },
+    {
+      "name": "logger",
+      "kind": "export",
+      "file": "src/logger.ts",
+      "line": 46,
+      "signature": "export const logger = createLogger();",
+      "description": "",
+      "keywords": [
+        "logger"
+      ],
+      "source": "src"
+    },
+    {
+      "name": "LoggerOptions",
+      "kind": "export",
+      "file": "src/logger.ts",
+      "line": 10,
+      "signature": "export interface LoggerOptions {",
+      "description": "Agent-owned timestamped logger.",
+      "keywords": [
+        "agent",
+        "logger",
+        "loggeroptions",
+        "owned",
+        "timestamped"
+      ],
+      "source": "src"
+    },
+    {
+      "name": "ok",
+      "kind": "export",
+      "file": "src/response.ts",
+      "line": 19,
+      "signature": "export function ok<T>(data: T): ApiOkResponse<T> {",
+      "description": "",
+      "keywords": [
+        "ok",
+        "response"
+      ],
+      "source": "src"
+    },
+    {
+      "name": "resolvePath",
+      "kind": "export",
+      "file": "src/fs.ts",
+      "line": 13,
+      "signature": "export function resolvePath(p: string): string {",
+      "description": "Resolves a leading ~ to the current HOME directory.",
+      "keywords": [
+        "current",
+        "directory",
+        "fs",
+        "home",
+        "leading",
+        "resolvepath",
+        "resolves",
+        "the",
+        "to"
+      ],
+      "source": "src"
+    },
+    {
+      "name": "retry",
+      "kind": "export",
+      "file": "src/retry.ts",
+      "line": 30,
+      "signature": "export async function retry<T>(",
+      "description": "",
+      "keywords": [
+        "retry"
+      ],
+      "source": "src"
+    },
+    {
+      "name": "RetryOptions",
+      "kind": "export",
+      "file": "src/retry.ts",
+      "line": 12,
+      "signature": "export interface RetryOptions {",
+      "description": "",
+      "keywords": [
+        "retry",
+        "retryoptions"
+      ],
+      "source": "src"
+    },
+    {
+      "name": "sendError",
+      "kind": "export",
+      "file": "src/express-response.ts",
+      "line": 12,
+      "signature": "export function sendError(",
+      "description": "Sends a custom error response.",
+      "keywords": [
+        "custom",
+        "error",
+        "express",
+        "response",
+        "senderror",
+        "sends"
+      ],
+      "source": "src"
+    },
+    {
+      "name": "sendKnownError",
+      "kind": "export",
+      "file": "src/express-response.ts",
+      "line": 21,
+      "signature": "export function sendKnownError(",
+      "description": "Sends a known error response from ERRORS.",
+      "keywords": [
+        "error",
+        "errors",
+        "express",
+        "from",
+        "known",
+        "response",
+        "sendknownerror",
+        "sends"
+      ],
+      "source": "src"
+    },
+    {
+      "name": "shortId",
+      "kind": "export",
+      "file": "src/id.ts",
+      "line": 12,
+      "signature": "export function shortId(): string {",
+      "description": "Generates a 16-character hex ID.",
+      "keywords": [
+        "character",
+        "generates",
+        "hex",
+        "id",
+        "shortid"
+      ],
+      "source": "src"
+    },
+    {
+      "name": "simpleDiff",
+      "kind": "export",
+      "file": "src/fs.ts",
+      "line": 57,
+      "signature": "export function simpleDiff(oldText: string, newText: string): string[] {",
+      "description": "Returns simple line-oriented differences between two strings.",
+      "keywords": [
+        "between",
+        "differences",
+        "fs",
+        "line",
+        "oriented",
+        "returns",
+        "simple",
+        "simplediff",
+        "strings",
+        "two"
+      ],
+      "source": "src"
+    },
+    {
+      "name": "sleep",
+      "kind": "export",
+      "file": "src/retry.ts",
+      "line": 8,
+      "signature": "export function sleep(ms: number): Promise<void> {",
+      "description": "Sleep, retry, and timeout helpers.",
+      "keywords": [
+        "and",
+        "helpers",
+        "retry",
+        "sleep",
+        "timeout"
+      ],
+      "source": "src"
+    },
+    {
+      "name": "TimeoutOptions",
+      "kind": "export",
+      "file": "src/retry.ts",
+      "line": 19,
+      "signature": "export interface TimeoutOptions {",
+      "description": "",
+      "keywords": [
+        "retry",
+        "timeoutoptions"
+      ],
+      "source": "src"
+    },
+    {
+      "name": "tryReadFile",
+      "kind": "export",
+      "file": "src/fs.ts",
+      "line": 18,
+      "signature": "export async function tryReadFile(filePath: string): Promise<string | null> {",
+      "description": "Reads a UTF-8 file and returns null on failure.",
+      "keywords": [
+        "and",
+        "failure",
+        "file",
+        "fs",
+        "null",
+        "on",
+        "reads",
+        "returns",
+        "tryreadfile",
+        "utf"
+      ],
+      "source": "src"
+    },
+    {
+      "name": "tryWriteFile",
+      "kind": "export",
+      "file": "src/fs.ts",
+      "line": 27,
+      "signature": "export async function tryWriteFile(filePath: string, content: string): Promise<boolean> {",
+      "description": "Writes a UTF-8 file atomically and creates parent directories as needed.",
+      "keywords": [
+        "and",
+        "as",
+        "atomically",
+        "creates",
+        "directories",
+        "file",
+        "fs",
+        "needed",
+        "parent",
+        "trywritefile",
+        "utf",
+        "writes"
+      ],
+      "source": "src"
+    },
+    {
+      "name": "withTimeout",
+      "kind": "export",
+      "file": "src/retry.ts",
+      "line": 52,
+      "signature": "export function withTimeout<T>(",
+      "description": "",
+      "keywords": [
+        "retry",
+        "withtimeout"
+      ],
+      "source": "src"
+    }
+  ]
+}

@@ -1,9 +1,9 @@
 /**
- * Shared utility package entry point.
+ * Agent standard function library entry point.
  *
  * Example:
- *   import { apiFetch, createApiClient, logger, ok, ERRORS, isSuccess } from '@linger/utils';
- *   import { sendError } from '@linger/utils/express';
+ *   import { apiFetch, createApiClient, logger, ok, ERRORS, isSuccess } from './index';
+ *   import { sendError } from './src/express-response';
  */
 
 export { apiFetch, createApiClient } from './src/fetch.js';

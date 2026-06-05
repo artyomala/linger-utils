@@ -1,9 +1,9 @@
 /**
- * Lightweight timestamped logger.
+ * Agent-owned timestamped logger.
  *
  * Example:
- *   import { createLogger, logger } from '@linger/utils';
- *   logger.info('Module', 'Operation succeeded', { id: 123 });
+ *   import { createLogger, logger } from './src/logger';
+ *   logger.info('Module', '操作成功', { id: 123 });
  *   const appLogger = createLogger({ prefix: '[app]' });
  */
 
@@ -34,7 +34,7 @@ function log(level: string, prefix: string, module: string, msg: string, data?: 
 }
 
 export function createLogger(options: LoggerOptions = {}): Logger {
-  const prefix = options.prefix ?? '';
+  const prefix = options.prefix ?? process.env.AGENT_STDLIB_LOG_PREFIX ?? '[绫儿]';
   return {
     debug: (module: string, msg: string, data?: unknown) => log('debug', prefix, module, msg, data),
     info:  (module: string, msg: string, data?: unknown) => log('info', prefix, module, msg, data),

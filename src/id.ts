@@ -3,7 +3,7 @@
  *
  * Example:
  *   import { shortId, createCorrelationId, isoTimestamp, formatZhTime }
- *     from '@linger/utils';
+ *     from './src/id';
  */
 
 import { createHash, randomBytes } from 'crypto';

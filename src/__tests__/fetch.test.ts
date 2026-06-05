@@ -105,13 +105,17 @@ describe('apiFetch', () => {
     expect(mockFetch).toHaveBeenCalledWith('http://localhost:5555/test', expect.anything());
   });
 
-  it('does not provide a default baseUrl for relative paths', async () => {
+  it('uses the local agent gateway as the seed default baseUrl', async () => {
+    mockFetch.mockResolvedValue({
+      ok: true,
+      headers: new Map([['content-type', 'application/json']]),
+      json: async () => ({ status: 'ok' }),
+      text: async () => '',
+    });
+
     const res = await apiFetch('/api/status');
-    expect(res.success).toBe(false);
-    expect(mockFetch).not.toHaveBeenCalled();
-    if (!res.success) {
-      expect(res.code).toBe('INVALID_URL');
-    }
+    expect(res.success).toBe(true);
+    expect(mockFetch).toHaveBeenCalledWith('http://127.0.0.1:18789/api/status', expect.anything());
   });
 
   it('supports absolute URLs without a baseUrl', async () => {

@@ -1,8 +1,8 @@
 /**
- * Express response helpers for structured API errors.
+ * Express response helpers for structured agent API errors.
  *
- * Import this subpath only in Express applications:
- *   import { sendError, sendKnownError } from '@linger/utils/express';
+ * Import this file only in Express applications:
+ *   import { sendError, sendKnownError } from './src/express-response';
  */
 
 import type { Response } from 'express';

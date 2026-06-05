@@ -2,7 +2,7 @@
  * File-system helpers with safe fallbacks.
  *
  * Example:
- *   import { tryReadFile, tryWriteFile, backupFile, simpleDiff } from '@linger/utils';
+ *   import { tryReadFile, tryWriteFile, backupFile, simpleDiff } from './src/fs';
  */
 
 import { promises as fs } from 'fs';
