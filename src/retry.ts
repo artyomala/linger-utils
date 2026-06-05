@@ -1,8 +1,8 @@
 /**
- * 绫儿标准工具库 — 睡眠与重试
+ * Sleep, retry, and timeout helpers.
  *
- * 用法：
- *   import { sleep, retry, withTimeout } from '.../linger-utils/src/retry';
+ * Example:
+ *   import { sleep, retry, withTimeout } from '@linger/utils';
  */
 
 export function sleep(ms: number): Promise<void> {
@@ -10,20 +10,23 @@ export function sleep(ms: number): Promise<void> {
 }
 
 export interface RetryOptions {
-  maxAttempts?: number;   // 最大重试次数（默认 3，最小 1）
-  backoffMs?: number;     // 初始等待（默认 1000，递增）
-  jitter?: boolean;       // 是否加随机抖动（默认 true）
-  onRetry?: (attempt: number, error: Error) => void;  // 每次重试前回调
+  maxAttempts?: number;
+  backoffMs?: number;
+  jitter?: boolean;
+  onRetry?: (attempt: number, error: Error) => void;
 }
 
-/** 带随机抖动的等待时间 */
+export interface TimeoutOptions {
+  timeoutMessage?: string;
+}
+
+/** Computes a retry delay with optional jitter. */
 function getDelay(base: number, attempt: number, jitter: boolean): number {
   const delay = base * attempt;
   if (!jitter) return delay;
-  return delay + Math.random() * 500; // 最多 +500ms 随机
+  return delay + Math.random() * 500;
 }
 
-/** 重试（递增等待 + 可选 jitter + 回调） */
 export async function retry<T>(
   fn: () => Promise<T>,
   options: RetryOptions = {},
@@ -46,12 +49,21 @@ export async function retry<T>(
   throw lastError!;
 }
 
-/** 为 Promise 添加超时 */
-export function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
-  return Promise.race([
-    promise,
-    new Promise<T>((_, reject) =>
-      setTimeout(() => reject(new Error(`操作超时 (${ms}ms)`)), ms),
-    ),
-  ]);
+export function withTimeout<T>(
+  operation: Promise<T> | ((signal: AbortSignal) => Promise<T>),
+  ms: number,
+  options: TimeoutOptions = {},
+): Promise<T> {
+  const controller = new AbortController();
+  const promise = typeof operation === 'function' ? operation(controller.signal) : operation;
+  let timer: ReturnType<typeof setTimeout>;
+
+  const timeout = new Promise<T>((_, reject) => {
+    timer = setTimeout(() => {
+      controller.abort();
+      reject(new Error(options.timeoutMessage ?? `Operation timed out (${ms}ms)`));
+    }, ms);
+  });
+
+  return Promise.race([promise, timeout]).finally(() => clearTimeout(timer));
 }

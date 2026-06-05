@@ -1,16 +1,14 @@
 /**
- * 绫儿标准工具库 — Express 错误响应
+ * Express response helpers for structured API errors.
  *
- * 只在 Express 项目中使用，非 Express 项目不需要引入此文件。
- *
- * 用法：
- *   import { sendError, sendKnownError } from '.../linger-utils/src/express-response';
+ * Import this subpath only in Express applications:
+ *   import { sendError, sendKnownError } from '@linger/utils/express';
  */
 
 import type { Response } from 'express';
-import { ERRORS, type ErrorCode } from './response';
+import { ERRORS, type ErrorCode } from './response.js';
 
-/** 发送自定义错误响应 */
+/** Sends a custom error response. */
 export function sendError(
   res: Response,
   err: { error: string; code: string },
@@ -19,7 +17,7 @@ export function sendError(
   return res.status(status).json(err);
 }
 
-/** 从 ERRORS 取错误并发送 */
+/** Sends a known error response from ERRORS. */
 export function sendKnownError(
   res: Response,
   code: ErrorCode,

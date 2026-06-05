@@ -1,8 +1,8 @@
 /**
- * fetch 单元测试（mock fetch）
+ * Fetch unit tests with a mocked global fetch.
  */
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { apiFetch } from '../fetch';
+import { apiFetch, createApiClient } from '../fetch';
 
 // Mock global fetch
 const mockFetch = vi.fn();
@@ -21,7 +21,7 @@ describe('apiFetch', () => {
       text: async () => '',
     });
 
-    const res = await apiFetch('/api/status');
+    const res = await apiFetch('/api/status', { baseUrl: 'https://api.example.com' });
     expect(res.success).toBe(true);
     if (res.success) {
       expect(res.data).toEqual({ status: 'ok', version: '1.0' });
@@ -35,7 +35,7 @@ describe('apiFetch', () => {
       text: async () => 'plain text body',
     });
 
-    const res = await apiFetch('/api/raw');
+    const res = await apiFetch('/api/raw', { baseUrl: 'https://api.example.com' });
     expect(res.success).toBe(true);
   });
 
@@ -46,10 +46,10 @@ describe('apiFetch', () => {
       text: async () => 'Not Found',
     });
 
-    const res = await apiFetch('/api/notfound');
+    const res = await apiFetch('/api/notfound', { baseUrl: 'https://api.example.com' });
     expect(res.success).toBe(false);
     if (!res.success) {
-      expect(res.error).toBe('HTTP 404');  // JSON 解析失败时回退到 HTTP status
+      expect(res.error).toBe('HTTP 404');
     }
   });
 
@@ -60,7 +60,7 @@ describe('apiFetch', () => {
       text: async () => JSON.stringify({ error: '参数错误', code: 'VALIDATION_ERROR' }),
     });
 
-    const res = await apiFetch('/api/bad');
+    const res = await apiFetch('/api/bad', { baseUrl: 'https://api.example.com' });
     expect(res.success).toBe(false);
     if (!res.success) {
       expect(res.error).toBe('参数错误');
@@ -75,7 +75,7 @@ describe('apiFetch', () => {
       text: async () => JSON.stringify({ message: 'Internal error', error_code: 'INTERNAL' }),
     });
 
-    const res = await apiFetch('/api/error');
+    const res = await apiFetch('/api/error', { baseUrl: 'https://api.example.com' });
     expect(res.success).toBe(false);
     if (!res.success) {
       expect(res.error).toBe('Internal error');
@@ -86,7 +86,7 @@ describe('apiFetch', () => {
   it('returns error on network failure', async () => {
     mockFetch.mockRejectedValue(new Error('fetch failed'));
 
-    const res = await apiFetch('/api/fail');
+    const res = await apiFetch('/api/fail', { baseUrl: 'https://api.example.com' });
     expect(res.success).toBe(false);
     if (!res.success) {
       expect(res.error).toBe('fetch failed');
@@ -105,6 +105,46 @@ describe('apiFetch', () => {
     expect(mockFetch).toHaveBeenCalledWith('http://localhost:5555/test', expect.anything());
   });
 
+  it('does not provide a default baseUrl for relative paths', async () => {
+    const res = await apiFetch('/api/status');
+    expect(res.success).toBe(false);
+    expect(mockFetch).not.toHaveBeenCalled();
+    if (!res.success) {
+      expect(res.code).toBe('INVALID_URL');
+    }
+  });
+
+  it('supports absolute URLs without a baseUrl', async () => {
+    mockFetch.mockResolvedValue({
+      ok: true,
+      headers: new Map([['content-type', 'application/json']]),
+      json: async () => ({ ok: true }),
+      text: async () => '',
+    });
+
+    await apiFetch('https://api.example.com/status');
+    expect(mockFetch).toHaveBeenCalledWith('https://api.example.com/status', expect.anything());
+  });
+
+  it('creates clients with explicit defaults', async () => {
+    mockFetch.mockResolvedValue({
+      ok: true,
+      headers: new Map([['content-type', 'application/json']]),
+      json: async () => ({ ok: true }),
+      text: async () => '',
+    });
+
+    const api = createApiClient({
+      baseUrl: 'https://api.example.com',
+      headers: { Authorization: 'Bearer token' },
+    });
+
+    await api('/status');
+    expect(mockFetch).toHaveBeenCalledWith('https://api.example.com/status', expect.objectContaining({
+      headers: expect.objectContaining({ Authorization: 'Bearer token' }),
+    }));
+  });
+
   it('appends query params', async () => {
     mockFetch.mockResolvedValue({
       ok: true,
@@ -113,7 +153,10 @@ describe('apiFetch', () => {
       text: async () => '',
     });
 
-    await apiFetch('/api/search', { query: { q: 'test', page: 1 } });
+    await apiFetch('/api/search', {
+      baseUrl: 'https://api.example.com',
+      query: { q: 'test', page: 1 },
+    });
     const url = mockFetch.mock.calls[0][0];
     expect(url).toContain('q=test');
     expect(url).toContain('page=1');
@@ -127,8 +170,32 @@ describe('apiFetch', () => {
       text: async () => '',
     });
 
-    await apiFetch('/api/update', { method: 'PUT', body: { key: 'val' } });
+    await apiFetch('/api/update', {
+      baseUrl: 'https://api.example.com',
+      method: 'PUT',
+      body: { key: 'val' },
+    });
     expect(mockFetch.mock.calls[0][1].method).toBe('PUT');
+  });
+
+  it('respects content-type header casing', async () => {
+    mockFetch.mockResolvedValue({
+      ok: true,
+      headers: new Map([['content-type', 'application/json']]),
+      json: async () => ({}),
+      text: async () => '',
+    });
+
+    await apiFetch('/api/update', {
+      baseUrl: 'https://api.example.com',
+      method: 'POST',
+      body: { key: 'val' },
+      headers: { 'content-type': 'application/vnd.api+json' },
+    });
+
+    expect(mockFetch.mock.calls[0][1].headers).toEqual({
+      'content-type': 'application/vnd.api+json',
+    });
   });
 
   it('times out on slow requests', async () => {
@@ -139,7 +206,10 @@ describe('apiFetch', () => {
       });
     });
 
-    const res = await apiFetch('/api/slow', { timeout: 50 });
+    const res = await apiFetch('/api/slow', {
+      baseUrl: 'https://api.example.com',
+      timeout: 50,
+    });
     expect(res.success).toBe(false);
     if (!res.success) {
       expect(res.code).toBe('TIMEOUT');

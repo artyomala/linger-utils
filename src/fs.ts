@@ -1,19 +1,20 @@
 /**
- * 绫儿标准工具库 — 文件系统
+ * File-system helpers with safe fallbacks.
  *
- * 用法：
- *   import { tryReadFile, tryWriteFile, backupFile, simpleDiff } from '.../linger-utils/src/fs';
+ * Example:
+ *   import { tryReadFile, tryWriteFile, backupFile, simpleDiff } from '@linger/utils';
  */
 
 import { promises as fs } from 'fs';
 import { dirname, basename, join, resolve } from 'path';
+import { isoTimestamp, shortId } from './id.js';
 
-/** 解析 ~ 为 HOME 目录 */
+/** Resolves a leading ~ to the current HOME directory. */
 export function resolvePath(p: string): string {
   return resolve(p.replace(/^~/, process.env.HOME || ''));
 }
 
-/** 安全读文件 — 失败返回 null */
+/** Reads a UTF-8 file and returns null on failure. */
 export async function tryReadFile(filePath: string): Promise<string | null> {
   try {
     return await fs.readFile(resolvePath(filePath), 'utf-8');
@@ -22,13 +23,12 @@ export async function tryReadFile(filePath: string): Promise<string | null> {
   }
 }
 
-/** 安全写文件 — 自动创建目录 */
+/** Writes a UTF-8 file atomically and creates parent directories as needed. */
 export async function tryWriteFile(filePath: string, content: string): Promise<boolean> {
   try {
     const resolved = resolvePath(filePath);
     await fs.mkdir(dirname(resolved), { recursive: true });
-    // 原子写入：先写临时文件再 rename
-    const tmp = resolved + '.tmp';
+    const tmp = `${resolved}.${process.pid}.${shortId()}.tmp`;
     await fs.writeFile(tmp, content, 'utf-8');
     await fs.rename(tmp, resolved);
     return true;
@@ -37,14 +37,15 @@ export async function tryWriteFile(filePath: string, content: string): Promise<b
   }
 }
 
-/** 备份文件到 .backup/ 目录，返回备份路径 */
+/** Copies a file into a sibling .backup directory and returns the backup path. */
 export async function backupFile(filePath: string): Promise<string | null> {
   try {
     const resolved = resolvePath(filePath);
     const content = await fs.readFile(resolved, 'utf-8');
     const backupDir = join(dirname(resolved), '.backup');
     await fs.mkdir(backupDir, { recursive: true });
-    const backupPath = join(backupDir, `${basename(filePath)}.${Date.now()}`);
+    const stamp = isoTimestamp().replace(/[:.]/g, '-');
+    const backupPath = join(backupDir, `${basename(filePath)}.${stamp}`);
     await fs.writeFile(backupPath, content, 'utf-8');
     return backupPath;
   } catch {
@@ -52,7 +53,7 @@ export async function backupFile(filePath: string): Promise<string | null> {
   }
 }
 
-/** 简易文本差异 */
+/** Returns simple line-oriented differences between two strings. */
 export function simpleDiff(oldText: string, newText: string): string[] {
   const oldLines = oldText.split('\n');
   const newLines = newText.split('\n');
@@ -67,7 +68,7 @@ export function simpleDiff(oldText: string, newText: string): string[] {
   return changes;
 }
 
-/** 列出 .backup/ 目录下的备份 */
+/** Lists backups in the sibling .backup directory. */
 export async function listBackups(filePath: string): Promise<string[]> {
   try {
     const resolved = resolvePath(filePath);

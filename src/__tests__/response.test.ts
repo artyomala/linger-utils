@@ -1,5 +1,5 @@
 /**
- * response 单元测试（判别联合）
+ * Response helper unit tests.
  */
 import { describe, it, expect } from 'vitest';
 import { ok, fail, ERRORS, isSuccess, isError } from '../response';
@@ -43,8 +43,9 @@ describe('fail', () => {
 });
 
 describe('ERRORS', () => {
-  it('has 9 error codes', () => {
-    expect(Object.keys(ERRORS)).toHaveLength(9);
+  it('has generic error codes', () => {
+    expect(Object.keys(ERRORS)).toHaveLength(8);
+    expect(ERRORS).not.toHaveProperty('GATEWAY_OFFLINE');
   });
 
   it('each error has error and code fields', () => {
@@ -55,7 +56,7 @@ describe('ERRORS', () => {
   });
 
   it('AUTH_REQUIRED has correct message', () => {
-    expect(ERRORS.AUTH_REQUIRED.error).toBe('未登录');
+    expect(ERRORS.AUTH_REQUIRED.error).toBe('Authentication required');
   });
 });
 

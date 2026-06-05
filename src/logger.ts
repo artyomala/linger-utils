@@ -1,19 +1,30 @@
 /**
- * 绫儿标准工具库 — 日志
+ * Lightweight timestamped logger.
  *
- * 用法：
- *   import { logger } from '~/.openclaw/workspace/skills/linger-utils/src/logger';
- *   logger.info('Module', '操作成功', { id: 123 });
+ * Example:
+ *   import { createLogger, logger } from '@linger/utils';
+ *   logger.info('Module', 'Operation succeeded', { id: 123 });
+ *   const appLogger = createLogger({ prefix: '[app]' });
  */
 
-const LOG_PREFIX = '[绫儿]';
+export interface LoggerOptions {
+  prefix?: string;
+}
+
+export interface Logger {
+  debug(module: string, msg: string, data?: unknown): void;
+  info(module: string, msg: string, data?: unknown): void;
+  warn(module: string, msg: string, data?: unknown): void;
+  error(module: string, msg: string, data?: unknown): void;
+}
 
 function fmt(): string {
   return new Date().toISOString().replace('T', ' ').slice(0, 19);
 }
 
-function log(level: string, module: string, msg: string, data?: unknown): void {
-  const line = `${fmt()} ${LOG_PREFIX} [${module}] ${msg}`;
+function log(level: string, prefix: string, module: string, msg: string, data?: unknown): void {
+  const prefixPart = prefix ? ` ${prefix}` : '';
+  const line = `${fmt()}${prefixPart} [${module}] ${msg}`;
   switch (level) {
     case 'debug': console.debug(line, data ?? ''); break;
     case 'info':  console.info(line, data ?? '');  break;
@@ -22,9 +33,14 @@ function log(level: string, module: string, msg: string, data?: unknown): void {
   }
 }
 
-export const logger = {
-  debug: (module: string, msg: string, data?: unknown) => log('debug', module, msg, data),
-  info:  (module: string, msg: string, data?: unknown) => log('info', module, msg, data),
-  warn:  (module: string, msg: string, data?: unknown) => log('warn', module, msg, data),
-  error: (module: string, msg: string, data?: unknown) => log('error', module, msg, data),
-};
+export function createLogger(options: LoggerOptions = {}): Logger {
+  const prefix = options.prefix ?? '';
+  return {
+    debug: (module: string, msg: string, data?: unknown) => log('debug', prefix, module, msg, data),
+    info:  (module: string, msg: string, data?: unknown) => log('info', prefix, module, msg, data),
+    warn:  (module: string, msg: string, data?: unknown) => log('warn', prefix, module, msg, data),
+    error: (module: string, msg: string, data?: unknown) => log('error', prefix, module, msg, data),
+  };
+}
+
+export const logger = createLogger();

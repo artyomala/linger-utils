@@ -1,19 +1,19 @@
 /**
- * 绫儿标准工具库 — ID 和时间
+ * ID and timestamp helpers.
  *
- * 用法：
+ * Example:
  *   import { shortId, createCorrelationId, isoTimestamp, formatZhTime }
- *     from '.../linger-utils/src/id';
+ *     from '@linger/utils';
  */
 
 import { createHash, randomBytes } from 'crypto';
 
-/** 生成 16 位 Hex 短 ID（适合 roomId / projectId） */
+/** Generates a 16-character hex ID. */
 export function shortId(): string {
   return randomBytes(8).toString('hex');
 }
 
-/** 从 channel + roomId 生成相关 ID */
+/** Creates a stable correlation ID from a channel and room ID. */
 export function createCorrelationId(channel: string, roomId: string): string {
   return createHash('sha256')
     .update(`${channel}:${roomId}`)
@@ -21,12 +21,12 @@ export function createCorrelationId(channel: string, roomId: string): string {
     .slice(0, 16);
 }
 
-/** ISO 时间戳 */
+/** Returns the current ISO timestamp. */
 export function isoTimestamp(): string {
   return new Date().toISOString();
 }
 
-/** 中文友好时间（如 "05/14 22:04"） */
+/** Formats a timestamp with compact zh-CN date and time fields. */
 export function formatZhTime(iso?: string): string {
   const d = iso ? new Date(iso) : new Date();
   return d.toLocaleString('zh-CN', {

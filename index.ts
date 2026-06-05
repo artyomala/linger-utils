@@ -1,15 +1,16 @@
 /**
- * 绫儿标准工具库 — 统一导出入口
+ * Shared utility package entry point.
  *
- * 用法：
- *   import { apiFetch, logger, ok, ERRORS, isSuccess } from '@linger/utils';
+ * Example:
+ *   import { apiFetch, createApiClient, logger, ok, ERRORS, isSuccess } from '@linger/utils';
  *   import { sendError } from '@linger/utils/express';
  */
 
-export { apiFetch } from './src/fetch.js';
-export type { FetchOptions } from './src/fetch.js';
+export { apiFetch, createApiClient } from './src/fetch.js';
+export type { ApiClientOptions, FetchOptions } from './src/fetch.js';
 
-export { logger } from './src/logger.js';
+export { createLogger, logger } from './src/logger.js';
+export type { Logger, LoggerOptions } from './src/logger.js';
 
 export {
   resolvePath,

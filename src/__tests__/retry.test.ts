@@ -1,5 +1,5 @@
 /**
- * retry 单元测试
+ * Retry helper unit tests.
  */
 import { describe, it, expect } from 'vitest';
 import { sleep, retry, withTimeout } from '../retry';
@@ -57,6 +57,18 @@ describe('withTimeout', () => {
   });
 
   it('rejects on timeout', async () => {
-    await expect(withTimeout(sleep(200), 50)).rejects.toThrow('超时');
+    await expect(withTimeout(sleep(200), 50)).rejects.toThrow('timed out');
+  });
+
+  it('aborts signal-aware operations on timeout', async () => {
+    let aborted = false;
+    await expect(withTimeout(async (signal) => new Promise((resolve) => {
+      signal.addEventListener('abort', () => {
+        aborted = true;
+        resolve('aborted');
+      });
+    }), 50)).rejects.toThrow('timed out');
+
+    expect(aborted).toBe(true);
   });
 });

@@ -1,10 +1,11 @@
 /**
- * 绫儿标准工具库 — 统一 HTTP 请求
+ * Fetch helpers that return structured API responses.
  *
- * 用法：
- *   import { apiFetch } from '.../linger-utils/src/fetch';
- *   const res = await apiFetch('/api/gateway/status');
- *   if (res.success) { console.log(res.data); }
+ * Example:
+ *   import { createApiClient } from '@linger/utils';
+ *   const api = createApiClient({ baseUrl: 'https://api.example.com' });
+ *   const res = await api('/status');
+ *   if (res.success) { handleData(res.data); }
  */
 
 import type { ApiResponse } from './response.js';
@@ -22,28 +23,31 @@ export interface FetchOptions {
   query?: Record<string, string | number>;
 }
 
-const DEFAULT_BASE_URL = 'http://127.0.0.1:18789';
+export interface ApiClientOptions {
+  baseUrl?: string;
+  timeout?: number;
+  headers?: Record<string, string>;
+}
+
 const DEFAULT_TIMEOUT = 10000;
 
-function buildUrl(base: string, path: string, query?: Record<string, string | number>): string {
-  if (!query) return new URL(path, base).toString();
-  const url = new URL(path, base);
-  for (const [k, v] of Object.entries(query)) url.searchParams.set(k, String(v));
+function buildUrl(baseUrl: string | undefined, path: string, query?: Record<string, string | number>): string {
+  const url = baseUrl ? new URL(path, baseUrl) : new URL(path);
+  for (const [k, v] of Object.entries(query ?? {})) url.searchParams.set(k, String(v));
   return url.toString();
 }
 
 function resolveContentType(body: BodyType, headers: Record<string, string>): string | undefined {
-  if (headers['Content-Type']) return;
+  if (Object.keys(headers).some(key => key.toLowerCase() === 'content-type')) return;
   if (body instanceof FormData) return;
   if (typeof body === 'string') return 'text/plain';
   if (body != null) return 'application/json';
 }
 
-/** 从 HTTP 错误响应中提取结构化错误信息 */
+/** Extracts structured error details from an HTTP error response. */
 async function extractError(res: Response): Promise<{ error: string; code?: string }> {
   try {
     const text = await res.text();
-    // 尝试解析 JSON 错误体
     const parsed = JSON.parse(text);
     if (parsed.error || parsed.message) {
       return {
@@ -63,10 +67,19 @@ export async function apiFetch<T = unknown>(
 ): Promise<ApiResponse<T>> {
   const {
     method = 'GET', body, timeout = DEFAULT_TIMEOUT,
-    headers = {}, baseUrl = DEFAULT_BASE_URL, query,
+    headers = {}, baseUrl, query,
   } = options;
 
-  const url = buildUrl(baseUrl, path, query);
+  let url: string;
+  try {
+    url = buildUrl(baseUrl, path, query);
+  } catch (err) {
+    return fail(
+      err instanceof Error ? err.message : 'Invalid URL',
+      'INVALID_URL',
+    );
+  }
+
   const contentType = resolveContentType(body, headers);
 
   const controller = new AbortController();
@@ -96,10 +109,24 @@ export async function apiFetch<T = unknown>(
     return { success: true, data: (await res.text()) as unknown as T };
   } catch (err: unknown) {
     if (err instanceof DOMException && err.name === 'AbortError') {
-      return fail('请求超时', 'TIMEOUT');
+      return fail('Request timed out', 'TIMEOUT');
     }
-    return fail(err instanceof Error ? err.message : '网络错误', 'NETWORK_ERROR');
+    return fail(err instanceof Error ? err.message : 'Network error', 'NETWORK_ERROR');
   } finally {
     clearTimeout(timer);
   }
+}
+
+export function createApiClient(defaults: ApiClientOptions) {
+  return function clientFetch<T = unknown>(
+    path: string,
+    options: FetchOptions = {},
+  ): Promise<ApiResponse<T>> {
+    return apiFetch<T>(path, {
+      ...options,
+      timeout: options.timeout ?? defaults.timeout,
+      baseUrl: options.baseUrl ?? defaults.baseUrl,
+      headers: { ...defaults.headers, ...options.headers },
+    });
+  };
 }
