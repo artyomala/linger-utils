@@ -4,7 +4,7 @@
   "description": "Shared TypeScript utilities for fetch, logging, file operations, IDs, retries, and API responses",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/linger-labs/linger-utils.git"
+    "url": "git+https://github.com/artyomala/linger-utils.git"
   },
   "keywords": [
     "typescript",
