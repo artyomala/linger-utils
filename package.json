@@ -1,0 +1,50 @@
+{
+  "name": "@linger/utils",
+  "version": "1.0.0",
+  "description": "绫儿标准工具库 — 统一 fetch/日志/文件操作/ID生成/重试/错误响应",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./express": {
+      "import": "./dist/src/express-response.js",
+      "require": "./dist/src/express-response.js",
+      "types": "./dist/src/express-response.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsc",
+    "typecheck": "tsc --noEmit",
+    "prepublishOnly": "npm run build",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "lint": "npx tsc --noEmit",
+    "ci": "npm run lint && npm run test && npm run build"
+  },
+  "dependencies": {
+    "@types/node": "^22.0.0",
+    "typescript": "^5.7.0"
+  },
+  "peerDependencies": {
+    "express": "^5.0.0"
+  },
+  "peerDependenciesMeta": {
+    "express": {
+      "optional": true
+    }
+  },
+  "files": [
+    "dist/",
+    "src/",
+    "index.ts",
+    "SKILL.md"
+  ],
+  "devDependencies": {
+    "vitest": "^4.1.6"
+  },
+  "type": "module"
+}
